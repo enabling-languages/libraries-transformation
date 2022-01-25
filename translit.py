@@ -15,16 +15,16 @@ import regex as re
 #from string import punctuation
 
 # test_strings = [
-#     "Bot lāingān kīeokap kānsāng khit khwāmsāmāt nai kānvāngphǣn thāng kānngœ̄n phư̄a phatthanā læ khanyāi kitchakān kānphalit khǭng khǭpkhūa / hīaphīang pen phāsā ʻĀngkit doī, Thǭ. ʻInping Manīvong, Nǭ. Somchai Sulitham ; pǣ doī, DǭRǭ. Tīam Vannasuk ; kūatkǣ doī, Thǭ. Yungthǭng Sīthāmāt, Nǭ. Thǭngsavāt Bupphā.",
-#     "Kō̜n cha mī Mư̄ang Vīang Sai thān thīman kānpativat : bot banthưk khwāmsongcham / Somphō̜n Sīsuvanna. Phim khang thī 1. [Viangchan, Laos] : Samnakphim Nakpaphan Lāo, 2019.",
-#     "Lom hāi chai khō̧ng phǣndin / Kom Khāosān Mǣnying Lāo Sūn Kāng Sahāphan Mǣnying Lāo. Phim khang thī nưng. Vīangchan : Lāo Dūangdư̄an, 2019.",
-#     "Sēnthāng sū santiphāp / khonkhwā læ hīaphīang, Suli Detvongphan.  Phim khang thi 1. Nakhō̜n Lūang Vīangchan : Samnakphim Sīkhīeo, 2019.",
-#     "Khwamcheppūat thi suaingam / Sǭnsai Khūnmanī.  Phim khang thi nung. Viangchan : Lao Dūangdư̄an, 2019."
+#     "Bot lāingān kīeokap kānsāng khit khwāmsāmāt nai kānvāngphǣn thāng kānngœ̄n phư̄a phatthanā læ khanyāi kitchakān kānphalit khǭng khǭpkhūa / hīaphīang pen phāsā ʻĀngkit doī, Thǭ. ʻInping Manīvong, Nǭ. Somchai Sulitham ; pǣ doī, DǭRǭ. Tīam Vannasuk ; kūatkǣ doī, Thǭ. Yungthǭng Sīthāmāt, Nǭ. Thǭngsavāt Bupphā.",
+#     "Kō̜n cha mī Mư̄ang Vīang Sai thān thīman kānpativat : bot banthưk khwāmsongcham / Somphō̜n Sīsuvanna. Phim khang thī 1. [Viangchan, Laos] : Samnakphim Nakpaphan Lāo, 2019.",
+#     "Lom hāi chai khō̧ng phǣndin / Kom Khāosān Mǣnying Lāo Sūn Kāng Sahāphan Mǣnying Lāo. Phim khang thī nưng. Vīangchan : Lāo Dūangdư̄an, 2019.",
+#     "Sēnthāng sū santiphāp / khonkhwā læ hīaphīang, Suli Detvongphan.  Phim khang thi 1. Nakhō̜n Lūang Vīangchan : Samnakphim Sīkhīeo, 2019.",
+#     "Khwamcheppūat thi suaingam / Sǭnsai Khūnmanī.  Phim khang thi nung. Viangchan : Lao Dūangdư̄an, 2019."
 # ]
 
 
 test_strings = [
-    "Khwamcheppūat thi suaingam / Sǭnsai Khūnmanī.  Phim khang thi nung. Viangchan : Lao Dūangdư̄an, 2019."
+    "Khwamcheppūat thi suaingam / Sǭnsai Khūnmanī.  Phim khang thi nung. Viangchan : Lao Dūangdư̄an, 2019."
 ]
 
 # temp = test_str.split()
@@ -53,8 +53,9 @@ def prep_string(s, d, b):
     if d.lower() == "reverse" and b.lower() != "both":
         s = s.lower()
     s = ud.normalize('NFD', s)
-    s = s.replace("\u0327", "\u0328").replace("\u031C", "\u0328")
-    return ud.normalize('NFC', s)
+    # s = s.replace("\u0327", "\u0328").replace("\u031C", "\u0328")
+    # return ud.normalize('NFC', s)
+    return s.replace("\u0327", "\u0328").replace("\u031C", "\u0328")
 
 # temp = test_str.split()
 # res = []
