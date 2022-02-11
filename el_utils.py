@@ -378,14 +378,16 @@ def segment_words(text, engine="icu", lang="", sep="\u0020"):
 # Transliteration
 #
 
-def prep_string(s, d, b):
-    if d.lower() == "reverse" and b.lower() != "both":
+DEFAULT_NF = "NFD"
+
+def prep_string(s, dir, lang, b="latin"):
+    if dir.lower() == "reverse" and b.lower() != "both":
         s = s.lower()
     #s = ud.normalize('NFD', s)
-    s = normalise("NFD", s)
-    # s = s.replace("\u0327", "\u0328").replace("\u031C", "\u0328")
-    # return ud.normalize('NFC', s)
-    return s.replace("\u0327", "\u0328").replace("\u031C", "\u0328")
+    s = normalise(DEFAULT_NF, s)
+    if lang == "lo":
+        s = s.replace("\u0327", "\u0328").replace("\u031C", "\u0328")
+    return s
 
 
 # direction (dir) = direction of transliteration ; forward (to Latin) | reverse (from Latin) 
@@ -423,7 +425,7 @@ def el_transliterate(bib_data, lang, dir="forward", nf="nfd"):
         bib_data = prep_string(bib_data, dir, SUPPORTED_TRANSLITERATORS[lang][1])
         translit_table = SUPPORTED_TRANSLITERATORS[lang]
         nf = nf.lower() if nf in SUPPORTED_NORMALISATION_FORMS else "nfd"
-        bib_data = prep_string(bib_data, dir, translit_table[1])
+        bib_data = prep_string(bib_data, dir, lang, translit_table[1])
         word_dict = transliteration_data[translit_table[0]]['translit_dict'][dir]
         label = translit_table[2]
         bib_data_split = re.split('(\W+?)', bib_data)
