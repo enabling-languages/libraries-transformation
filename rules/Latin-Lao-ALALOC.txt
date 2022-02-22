@@ -1,0 +1,4 @@
+::NFD;
+::Latin-LaoLogical;
+::LaoLogical-Lao;
+::NFC;

@@ -1,0 +1,6 @@
+::NFD;
+::Lao-LaoSemi;
+::Any-BreakInternal;
+::Lao-LaoLogical;
+::LaoLogical-Latin-ALALOC;
+::NFC;

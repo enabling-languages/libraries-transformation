@@ -380,7 +380,7 @@ def segment_words(text, engine="icu", lang="", sep="\u0020"):
 
 DEFAULT_NF = "NFD"
 
-def prep_string(s, dir, lang, b="latin"):
+def prep_string(s, dir, lang, b="latin-only"):
     if dir.lower() == "reverse" and b.lower() != "both":
         s = s.lower()
     #s = ud.normalize('NFD', s)
@@ -419,12 +419,13 @@ SUPPORTED_TRANSLITERATORS = {
 
 def el_transliterate(bib_data, lang, dir="forward", nf="nfd"):
     lang = lang.replace("-", "_").split('_')[0]
+    dir = dir.lower()
     if dir != "reverse":
-        dir == "forward"
+        dir = "forward"
     if SUPPORTED_TRANSLITERATORS[lang]:
-        bib_data = prep_string(bib_data, dir, SUPPORTED_TRANSLITERATORS[lang][1])
+        #bib_data = prep_string(bib_data, dir, SUPPORTED_TRANSLITERATORS[lang][1])
         translit_table = SUPPORTED_TRANSLITERATORS[lang]
-        nf = nf.lower() if nf in SUPPORTED_NORMALISATION_FORMS else "nfd"
+        nf = nf.lower() if nf.lower() in SUPPORTED_NORMALISATION_FORMS else "nfd"
         bib_data = prep_string(bib_data, dir, lang, translit_table[1])
         word_dict = transliteration_data[translit_table[0]]['translit_dict'][dir]
         label = translit_table[2]
@@ -432,6 +433,8 @@ def el_transliterate(bib_data, lang, dir="forward", nf="nfd"):
         res = "".join(word_dict.get(ele, ele) for ele in bib_data_split)
     else:
         res = bib_data
+    if nf != "nfd":
+        res = normalise(nf, res)
     return res
 
 # el_transliterate("vœ̄nvīlāvong", "lo-LA", dir="reverse")

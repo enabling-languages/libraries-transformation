@@ -1,0 +1,36 @@
+Lao,Codepoints,Initial,Final,Notes
+ກ,U+0E81,k,k,
+ຂ,U+0E82,kh,(k),
+ຄ,U+0E84,kh,(k),
+ງ,U+0E87,ng,ng,
+ຈ,U+08,ch,(t),
+ສ,U+08AA,s,(t),
+ຊ,U+088A,s,(t),
+ຍ,U+0E8D,ny,,"In final position, ຍ follows as vowel, closing the diphthong, and is romanized as i. See the vowel table (ai and āi). In non-initial position, ຍ is often written in a secondary form, ຽ. See the vowel table (ia and īa)."
+ດ,U+0E94,d,t,
+ຕ,U+0E95,t,(t),
+ຖ,U+0E96,th,(t),
+ທ,U+0E97,th,(t),
+ນ,U+0E99,n,n,
+ບ,U+0E9A,b,p,
+ປ,U+0E9B,p,(p),
+ຜ,U+0E,ph,(p),
+ຝ,U+0E,f,(p),
+ພ,U+0E,ph,(p),
+ຟ,U+0E,f,(p),
+ມ,U+0E,m,m,
+ຢ,U+0E,y,,
+ຣ,U+0E,r,(n),
+ລ,U+0E,l,(n),"The combining form of ລ is ◌.ຼ It is not romanized except when subscript to ຫ, thus: ຄຼສຕຽນ (khitsatīan), ຫາຍ (lāi)."
+ວ,U+0E,v,,"In initial position, ວ is romanized as v, thus: ວດັ (vat). When medial ວ is followed by a vowel, it forms a cluster with the initial consonant, and is romanized as w, thus: ຂວາ (khwā), ແຂວງ (khwǣng). When medial ວ is followed by a final consonant, it is romanized ūa, thus: ບວກ (būak), ດ້ວຍ (dūai). When ວ is in final position following a vowel, it is romanized aso, thus: ນາວ (nāo), ແກວ້ (kǣo). See also the vowel table (ua and ūa). The forms ◌ວິ and ◌ວີ are romanized as iu and īu, and the forms ◌ຽວ and ເ◌ ັຽວ are romanized as īeo."
+ຫ,U+0E,h,,"ຫ is not romanized before ຍ (ny), ນ (n), ມ (m), ຣ (r), ລ (l), and ວ (v), thus: ຫຍາ້ (nyā). ຫນ and ຫມ are often written as ligatures, thus: ຫນ (n) and ຫມ (m)."
+ອ,U+0E,ʻ (ayn),,"ອ is used in initial position for syllables beginning with a vowel, thus: ອີກ (ʻīk). When not in initial position, ອ is a vowel. See the vowel table (ǫ, ǭ, ưa, ư̄a)."
+ຮ,U+0E,h,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
