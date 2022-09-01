@@ -7,17 +7,25 @@
 #    Copyright © 2021 Enabling Languages.
 #    This file is made available under the MIT licence.
 #
+# Usage:
+#    import os, sys
+#    libpath = os.path.expanduser('~/dev/i18n/py/utils/')
+#    if libpath not in sys.path:
+#        sys.path.append(libpath)
+#    import el_transliteration
+#    import el_utils as elu
 
 import os, sys
 import unicodedataplus as ud
 import regex as re
 import codecs
 from tabulate import tabulate
+from collections import OrderedDict
 import grapheme
 from laonlp.tokenize import word_tokenize as lao_wt
 from pythainlp.tokenize import word_tokenize as thai_wt
 #from khmernltk import word_tokenize as khmer_wt
-from icu import BreakIterator, Locale, Transliterator, UTransDirection
+from icu import BreakIterator, Locale, Collator, Transliterator, UTransDirection
 # Code for interbnal testing and development:
 # libpath = os.path.expanduser('~/dev/i18n/libr/yale-lao')
 libpath = os.path.expanduser('./')
@@ -87,12 +95,23 @@ def normalise(nf, s):
     return s
 
 # codepoints in string
-def codepoints(text, prefix=True):
-    return ' '.join('U+{:04X}'.format(ord(c)) for c in text) if prefix else ' '.join('{:04X}'.format(ord(c)) for c in text)
+# def codepoints(text, prefix=True):
+#     return ' '.join('U+{:04X}'.format(ord(c)) for c in text) if prefix else ' '.join('{:04X}'.format(ord(c)) for c in text)
 
 # codepoints and characters in string
-def cp(text, prefix=True):
-    return ' '.join(f"U+{ord(c):04X} ({c})" for c in text) if prefix else ' '.join(f"{ord(c):04X} ({c})" for c in text)
+#
+# Usage:
+#    elu.codepoints("𞤀𞤣𞤤𞤢𞤥 𞤆𞤵𞤤𞤢𞤪")
+#    elu.cp("𞤀𞤣𞤤𞤢𞤥 𞤆𞤵𞤤𞤢𞤪", extended=False)
+#    elu.cp("𞤀𞤣𞤤𞤢𞤥 𞤆𞤵𞤤𞤢𞤪", prefix=False, extended=False)
+
+def codepoints(text, prefix=True, extended=True):
+    if extended:
+        return ' '.join(f"U+{ord(c):04X} ({c})" for c in text) if prefix else ' '.join(f"{ord(c):04X} ({c})" for c in text)
+    else:
+        return ' '.join('U+{:04X}'.format(ord(c)) for c in text) if prefix else ' '.join('{:04X}'.format(ord(c)) for c in text)
+
+cp = codepoints
 
 # table of codepoints in string, giving basic data on each charcater
 def udata(text):
@@ -378,36 +397,36 @@ def segment_words(text, engine="icu", lang="", sep="\u0020"):
 # Transliteration
 #
 
-DEFAULT_NF = "NFD"
+DEFAULT_NF = "nfd"
 
 def prep_string(s, dir, lang, b="latin-only"):
     if dir.lower() == "reverse" and b.lower() != "both":
         s = s.lower()
     #s = ud.normalize('NFD', s)
     s = normalise(DEFAULT_NF, s)
-    if lang == "lo":
+    if lang == "lo" and dir.lower() == "reverse":
         s = s.replace("\u0327", "\u0328").replace("\u031C", "\u0328")
     return s
 
 
 # direction (dir) = direction of transliteration ; forward (to Latin) | reverse (from Latin) 
 # bicameral script (bicameral) = latin_only | both
-def to_native(bib_data, translit_table="laoo_t_latn_m0_ALALOC", dir="reverse", bicameral="latin_only" ):
-    bib_data = prep_string(bib_data, dir, bicameral)
-    word_dict = {}
-    if translit_table == "laoo_t_latn_m0_ALALOC":
-        from laoo_t_latn_m0_ALALOC import translit_dict, translit_rules
-        word_dict = translit_dict[dir]
-        label = "Lao-Latin/ALALOC"
-        #custom_transliterator = Transliterator.createFromRules(label, translit_rules, UTransDirection.REVERSE)
-        #res = " ".join(word_dict.get(ele, ele) for ele in bib_data.split())
-        bib_data_split = re.split('(\W+?)', bib_data)
-        res = "".join(word_dict.get(ele, ele) for ele in bib_data_split)
-        translit_result = res
-        #translit_result = custom_transliterator.transliterate(res)
-    else:
-        translit_result = bib_data
-    return translit_result
+# def to_native(bib_data, translit_table="laoo_t_latn_m0_ALALOC", dir="reverse", bicameral="latin_only" ):
+#     bib_data = prep_string(bib_data, dir, bicameral)
+#     word_dict = {}
+#     if translit_table == "laoo_t_latn_m0_ALALOC":
+#         from laoo_t_latn_m0_ALALOC import translit_dict, translit_rules
+#         word_dict = translit_dict[dir]
+#         label = "Lao-Latin/ALALOC"
+#         #custom_transliterator = Transliterator.createFromRules(label, translit_rules, UTransDirection.REVERSE)
+#         #res = " ".join(word_dict.get(ele, ele) for ele in bib_data.split())
+#         bib_data_split = re.split('(\W+?)', bib_data)
+#         res = "".join(word_dict.get(ele, ele) for ele in bib_data_split)
+#         translit_result = res
+#         #translit_result = custom_transliterator.transliterate(res)
+#     else:
+#         translit_result = bib_data
+#     return translit_result
 
 SUPPORTED_TRANSLITERATORS = {
     "bo": ("", "latin_only", ""),
@@ -425,12 +444,39 @@ def el_transliterate(bib_data, lang, dir="forward", nf="nfd"):
     if SUPPORTED_TRANSLITERATORS[lang]:
         #bib_data = prep_string(bib_data, dir, SUPPORTED_TRANSLITERATORS[lang][1])
         translit_table = SUPPORTED_TRANSLITERATORS[lang]
-        nf = nf.lower() if nf.lower() in SUPPORTED_NORMALISATION_FORMS else "nfd"
+        nf = nf.lower() if nf.lower() in SUPPORTED_NORMALISATION_FORMS else DEFAULT_NF
         bib_data = prep_string(bib_data, dir, lang, translit_table[1])
-        word_dict = transliteration_data[translit_table[0]]['translit_dict'][dir]
+        # word_dict = transliteration_data[translit_table[0]]['translit_dict'][dir]
+        if dir == "forward":
+            collator = Collator.createInstance(Locale.getRoot())
+        else:
+            collator = Collator.createInstance(Locale(lang))
+        
+        if dir == "reverse" and lang in list(Collator.getAvailableLocales().keys()):
+            collator = Collator.createInstance(Locale(lang))
+        else:
+            collator = Collator.createInstance(Locale.getRoot())
+
+        word_dict = OrderedDict(sorted(transliteration_data[translit_table[0]]['translit_dict'][dir].items(), reverse=True, key=lambda x: collator.getSortKey(x[0])))
+        word_dict = {normalise(DEFAULT_NF, k): normalise(DEFAULT_NF, v) for k, v in word_dict.items()}
+
         label = translit_table[2]
-        bib_data_split = re.split('(\W+?)', bib_data)
-        res = "".join(word_dict.get(ele, ele) for ele in bib_data_split)
+        if dir == "reverse":
+            bib_data_split = re.split('(\W+?)', bib_data)
+            res = "".join(word_dict.get(ele, ele) for ele in bib_data_split)
+        else:
+            # pattern = re.compile('|'.join(word_dict.keys()))
+            # res = pattern.sub(lambda x: word_dict[x.group()], bib_data)
+            from functools import reduce
+            res = reduce(lambda x, y: x.replace(y, word_dict[y]), word_dict, bib_data)
+            # for key, value in word_dict.items():
+            #    res = bib_data.replace(key, value)
+            # bib_data_split = re.split('(\W+?)', bib_data)
+            # res = "".join(word_dict.get(ele, ele) for ele in bib_data_split)
+            # for key, value in word_dict.items():
+            #     if key in bib_data:
+            #         res = bib_data.replace(key, value)
+            
     else:
         res = bib_data
     if nf != "nfd":
@@ -441,6 +487,7 @@ def el_transliterate(bib_data, lang, dir="forward", nf="nfd"):
 
 # el_transliterate("vœ̄nvīlāvong", "lo", dir="reverse")
 
+# el_transliterate("vœ̄nvīlāvong", "lo", dir="reverse", nf="nfd")
 
 # test = "laoo_t_latn_m0_ALALOC"
 # dir = "forward"

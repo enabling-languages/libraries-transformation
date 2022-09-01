@@ -1,5 +1,4 @@
-from ssl import SSL_ERROR_SSL
-
+# from ssl import SSL_ERROR_SSL
 
 transliteration_data = {
     "laoo_t_latn_m0_ALALOC": {
